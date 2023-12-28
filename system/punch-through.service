@@ -1,0 +1,15 @@
+[Unit]
+Description=punch-through
+After=network.target
+
+[Service]
+User=web
+WorkingDirectory=/web/punch-through
+LimitNOFILE=4096
+Environment=ENV=prod
+ExecStart=/home/web/.local/bin/poetry run gunicorn punch:app --capture-output --workers 2 -k uvicorn.workers.UvicornWorker --bind unix:punch-through.sock --error-logfile /var/log/gunicorn/punch-through/error.log --log-config=logging.conf
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
